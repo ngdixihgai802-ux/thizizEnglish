@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Góc Học Tiếng Anh Pinky & Yellow Pastel 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-pink: #fff0f3;
+      --pastel-pink: #ffccd5;
+      --deep-pink: #ff758f;
+      --pastel-yellow: #fff275;
+      --soft-yellow: #ffeb99;
+      --text-color: #4a4a4a;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+    body { background-color: var(--bg-pink); color: var(--text-color); min-height: 100vh; }
+
+    /* Modal / Popups */
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4); display: flex; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .popup {
+      background: var(--white); padding: 30px; border-radius: 24px; text-align: center;
+      box-shadow: 0 10px 25px rgba(255, 117, 143, 0.2); max-width: 400px; width: 90%;
+      border: 3px dashed var(--pastel-pink);
+    }
+    .popup h3 { color: var(--deep-pink); margin-bottom: 15px; font-size: 1.4rem; }
+    
+    .btn {
+      padding: 12px 24px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer;
+      transition: all 0.3s; margin: 5px; font-size: 1rem;
+    }
+    .btn-pink { background: var(--deep-pink); color: var(--white); }
+    .btn-pink:hover { transform: scale(1.05); background: #ff4d6d; }
+    .btn-yellow { background: var(--pastel-yellow); color: #5a5200; }
+    .btn-yellow:hover { transform: scale(1.05); background: var(--soft-yellow); }
+    
+    .start-btn {
+      background: var(--pastel-pink); color: var(--deep-pink); font-size: 2rem;
+      padding: 20px 60px; border-radius: 50px; border: 4px solid var(--deep-pink);
+      cursor: pointer; font-weight: 800; box-shadow: 0 8px 15px rgba(255, 117, 143, 0.3); transition: 0.3s;
+    }
+    .start-btn:hover { transform: scale(1.1); background: var(--deep-pink); color: var(--white); }
+
+    /* Header & Navigation */
+    header {
+      display: flex; justify-content: space-between; align-items: center; padding: 15px 30px;
+      background: var(--white); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--pastel-yellow); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--deep-pink); }
+    
+    .nav-tabs { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
+    .tab-btn {
+      padding: 12px 30px; border-radius: 25px; border: 2px solid var(--pastel-pink);
+      background: var(--white); font-weight: 800; color: var(--text-color); cursor: pointer; transition: 0.3s;
+    }
+    .tab-btn.active { background: var(--pastel-yellow); border-color: #ffd000; color: #4a4200; }
+
+    .main-container { max-width: 900px; margin: 0 auto; padding: 0 20px 40px; }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Folder Management */
+    .folder-bar {
+      background: var(--white); padding: 15px 20px; border-radius: 20px;
+      display: flex; gap: 10px; align-items: center; overflow-x: auto; margin-bottom: 20px;
+      border: 2px solid var(--pastel-pink);
+    }
+    .folder-chip {
+      padding: 8px 16px; border-radius: 15px; background: var(--bg-pink); font-weight: 700;
+      cursor: pointer; white-space: nowrap; border: 1px solid var(--pastel-pink);
+    }
+    .folder-chip.active { background: var(--deep-pink); color: white; }
+
+    /* Flashcard Style */
+    .card-box {
+      width: 100%; max-width: 450px; height: 280px; margin: 20px auto; perspective: 1000px; cursor: pointer;
+    }
+    .card-inner {
+      width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s;
+      border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.08); background: var(--white);
+      border: 3px solid var(--pastel-yellow);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-front, .card-back {
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+    }
+    .card-back { transform: rotateY(180deg); background: #fffdf0; }
+    .card-img { max-width: 120px; max-height: 90px; border-radius: 12px; margin-bottom: 10px; }
+
+    .card-nav { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 20px; }
+
+    /* AI Test Config */
+    .config-card { background: var(--white); padding: 25px; border-radius: 20px; border: 2px solid var(--pastel-pink); margin-bottom: 20px; }
+    .config-title { font-weight: 800; color: var(--deep-pink); margin-bottom: 10px; font-size: 1.1rem; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+    .checkbox-item {
+      background: var(--bg-pink); padding: 8px 15px; border-radius: 12px; font-weight: 700; cursor: pointer;
+    }
+    .checkbox-item input { margin-right: 6px; }
+
+    .question-box { background: var(--white); padding: 20px; border-radius: 18px; margin-bottom: 15px; border-left: 5px solid var(--deep-pink); }
+    .option-btn {
+      display: block; width: 100%; text-align: left; padding: 10px 15px; margin: 8px 0;
+      border: 2px solid var(--pastel-pink); border-radius: 12px; background: var(--white); font-weight: 700; cursor: pointer;
+    }
+    .option-btn.selected { background: var(--pastel-yellow); border-color: #ffd000; }
+  </style>
+</head>
+<body>
+
+  <!-- POPUP AUTH -->
+  <div class="overlay" id="authModal">
+    <div class="popup">
+      <h3>Đăng nhập trước khi học nhé 🌸</h3>
+      <p style="margin-bottom: 20px; color: #666;">Nhập tên của em để bắt đầu tạo hồ sơ học tập nha!</p>
+      <input type="text" id="usernameInput" placeholder="Tên của em..." style="padding: 12px; width: 80%; border-radius: 12px; border: 2px solid var(--pastel-pink); outline: none; margin-bottom: 15px; text-align: center; font-weight: 700;">
+      <br>
+      <button class="btn btn-pink" onclick="login()">Đăng Nhập Ngay 🚀</button>
+    </div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="overlay" id="startScreen" style="background: var(--bg-pink);">
+    <div style="text-align: center;">
+      <h1 style="color: var(--deep-pink); font-size: 2.5rem; margin-bottom: 30px;">🌸 Pinky English Corner 🌸</h1>
+      <button class="start-btn" onclick="handleStart()">START ✨</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <header>
+    <div class="user-profile" onclick="openProfile()">
+      <div class="avatar" id="userAvatar">🌸</div>
+      <span style="font-weight: 800; color: var(--deep-pink);" id="userNameDisplay">Khách</span>
+    </div>
+    <h2 style="color: var(--deep-pink);">Góc Học Tiếng Anh</h2>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchSection('vocab')">📚 Từ Vựng & Thẻ Lật</button>
+    <button class="tab-btn" onclick="switchSection('test')">📝 Bài Kiểm Tra (AI)</button>
+  </div>
+
+  <div class="main-container">
+
+    <!-- FOLDER MANAGER -->
+    <div class="folder-bar">
+      <span style="font-weight: 800; color: var(--deep-pink);">📁 Thư mục:</span>
+      <div id="folderList" style="display: flex; gap: 8px;"></div>
+      <button class="btn btn-yellow" onclick="createFolder()" style="padding: 5px 12px; font-size: 0.9rem;">+ Tạo thư mục</button>
+      <button class="btn btn-pink" onclick="deleteCurrentFolder()" style="padding: 5px 12px; font-size: 0.9rem;">🗑️ Xóa</button>
+    </div>
+
+    <!-- SECTION 1: VOCABULARY -->
+    <div id="vocab" class="section active">
+      <div class="card-box" onclick="flipCard()">
+        <div class="card-inner" id="flashcard">
+          <div class="card-front">
+            <img id="cardImg" class="card-img" src="" style="display:none;">
+            <h2 id="cardEn" style="color: var(--deep-pink); font-size: 2rem;">Chọn hoặc tạo thư mục từ vựng</h2>
+            <small style="color: #999; margin-top: 10px;">(Chạm để lật mặt sau)</small>
+          </div>
+          <div class="card-back">
+            <h3 id="cardVi" style="color: #333; font-size: 1.6rem;">Nghĩa tiếng Việt hiện ở đây</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-nav">
+        <button class="btn btn-pink" onclick="prevCard()">⬅️ Trở lại</button>
+        <span style="font-weight: 800; color: var(--deep-pink);" id="pageIndicator">Trang 0/0</span>
+        <button class="btn btn-pink" onclick="nextCard()">Trang sau ➡️</button>
+      </div>
+
+      <!-- ADD VOCAB FORM -->
+      <div style="background: white; padding: 20px; border-radius: 20px; margin-top: 30px; border: 2px solid var(--pastel-pink);">
+        <h4 style="color: var(--deep-pink); margin-bottom: 10px;">➕ Thêm từ vựng mới vào thư mục này:</h4>
+        <input type="text" id="addEn" placeholder="Từ Tiếng Anh (Cột A)" style="padding: 10px; width: 30%; border-radius: 10px; border: 1px solid #ccc;">
+        <input type="text" id="addVi" placeholder="Nghĩa Tiếng Việt (Cột B)" style="padding: 10px; width: 30%; border-radius: 10px; border: 1px solid #ccc;">
+        <input type="text" id="addImg" placeholder="Link ảnh Google (tùy chọn)" style="padding: 10px; width: 30%; border-radius: 10px; border: 1px solid #ccc;">
+        <button class="btn btn-yellow" onclick="addWord()" style="margin-top: 10px;">Lưu Từ Vựng</button>
+      </div>
+    </div>
+
+    <!-- SECTION 2: AI TEST GENERATOR -->
+    <div id="test" class="section">
+      <div class="config-card">
+        <div class="config-title">🔑 Nhập API Key AI Gemini của em (Chỉ dán 1 lần):</div>
+        <input type="password" id="apiKeyInput" placeholder="Dán mã AIzaSyD... vào đây" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; margin-bottom: 15px;">
+
+        <div class="config-title">1. Chọn Cấp Độ:</div>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="radio" name="level" value="Dễ" checked> Dễ</label>
+          <label class="checkbox-item"><input type="radio" name="level" value="Trung bình"> Trung Bình</label>
+          <label class="checkbox-item"><input type="radio" name="level" value="Khó"> Khó</label>
+        </div>
+
+        <div class="config-title">2. Trình Độ (Chọn nhiều mục):</div>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" value="A1-A2" checked> A1-A2</label>
+          <label class="checkbox-item"><input type="checkbox" value="A2-B1"> A2-B1</label>
+          <label class="checkbox-item"><input type="checkbox" value="B1-B2"> B1-B2</label>
+        </div>
+
+        <div class="config-title">3. Chủ Điểm Ngữ Pháp (Chọn nhiều mục):</div>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" value="Hiện tại đơn" checked> Thì Hiện tại đơn</label>
+          <label class="checkbox-item"><input type="checkbox" value="Quá khứ đơn"> Thì Quá khứ đơn</label>
+          <label class="checkbox-item"><input type="checkbox" value="Câu điều kiện"> Câu điều kiện</label>
+        </div>
+
+        <div class="config-title">4. Dạng Bài Kiểm Tra:</div>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="radio" name="testType" value="ABCD" checked> Trắc nghiệm (ABCD)</label>
+          <label class="checkbox-item"><input type="radio" name="testType" value="Đoạn văn"> Đoạn văn điền từ</label>
+          <label class="checkbox-item"><input type="radio" name="testType" value="Điền từ câu dài"> Điền từ vào câu dài</label>
+          <label class="checkbox-item"><input type="radio" name="testType" value="Tích hợp"> Bài thi Tích hợp</label>
+        </div>
+
+        <button class="btn btn-pink" style="width: 100%; padding: 15px; margin-top: 10px;" onclick="generateAITest()">✨ AI Tạo Đề Thi Tự Động (Chờ 15-30s) ✨</button>
+      </div>
+
+      <!-- TEST DISPLAY AREA -->
+      <div id="testArea"></div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentUser = localStorage.getItem('pinky_user') || null;
+    let folders = JSON.parse(localStorage.getItem('pinky_folders')) || { "Từ vựng Mẫu": [{en: "Strawberry", vi: "Quả dâu tây", img: ""}] };
+    let currentFolder = "Từ vựng Mẫu";
+    let cardIndex = 0;
+    let userAnswers = {};
+    let generatedTest = null;
+
+    function handleStart() {
+      if(!currentUser) {
+        document.getElementById('authModal').style.display = 'flex';
+      } else {
+        document.getElementById('startScreen').style.display = 'none';
+        initApp();
+      }
+    }
+
+    function login() {
+      const name = document.getElementById('usernameInput').value.trim();
+      if(name) {
+        currentUser = name;
+        localStorage.setItem('pinky_user', name);
+        document.getElementById('authModal').style.display = 'none';
+        document.getElementById('startScreen').style.display = 'none';
+        initApp();
+      }
+    }
+
+    function initApp() {
+      document.getElementById('userNameDisplay').innerText = currentUser;
+      renderFolders();
+      updateCard();
+    }
+
+    function switchSection(secId) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(secId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // FOLDER & VOCAB
+    function renderFolders() {
+      const list = document.getElementById('folderList');
+      list.innerHTML = '';
+      Object.keys(folders).forEach(f => {
+        const chip = document.createElement('div');
+        chip.className = `folder-chip ${f === currentFolder ? 'active' : ''}`;
+        chip.innerText = f;
+        chip.onclick = () => { currentFolder = f; cardIndex = 0; renderFolders(); updateCard(); };
+        list.appendChild(chip);
+      });
+    }
+
+    function createFolder() {
+      const name = prompt("Nhập tên thư mục mới:");
+      if(name && !folders[name]) {
+        folders[name] = [];
+        currentFolder = name;
+        saveData();
+        renderFolders();
+        updateCard();
+      }
+    }
+
+    function deleteCurrentFolder() {
+      if(confirm(`Xóa thư mục ${currentFolder}?`)) {
+        delete folders[currentFolder];
+        const keys = Object.keys(folders);
+        currentFolder = keys.length ? keys[0] : "Thư mục mới";
+        if(!folders[currentFolder]) folders[currentFolder] = [];
+        saveData();
+        renderFolders();
+        updateCard();
+      }
+    }
+
+    function addWord() {
+      const en = document.getElementById('addEn').value.trim();
+      const vi = document.getElementById('addVi').value.trim();
+      const img = document.getElementById('addImg').value.trim();
+      if(en && vi) {
+        folders[currentFolder].push({ en, vi, img });
+        saveData();
+        updateCard();
+        document.getElementById('addEn').value = ''; document.getElementById('addVi').value = ''; document.getElementById('addImg').value = '';
+        alert("Đã thêm từ thành công!");
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('pinky_folders', JSON.stringify(folders));
+    }
+
+    function updateCard() {
+      const list = folders[currentFolder] || [];
+      const total = list.length;
+      document.getElementById('pageIndicator').innerText = `Trang ${total ? cardIndex + 1 : 0}/${total}`;
+      
+      if(total === 0) {
+        document.getElementById('cardEn').innerText = "Thư mục trống";
+        document.getElementById('cardVi').innerText = "Hãy thêm từ vựng mới bên dưới";
+        document.getElementById('cardImg').style.display = 'none';
+        return;
+      }
+
+      const item = list[cardIndex];
+      document.getElementById('cardEn').innerText = item.en;
+      document.getElementById('cardVi').innerText = item.vi;
+      const img = document.getElementById('cardImg');
+      if(item.img) { img.src = item.img; img.style.display = 'block'; } else { img.style.display = 'none'; }
+      document.getElementById('flashcard').classList.remove('flipped');
+    }
+
+    function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+    function nextCard() { const list = folders[currentFolder] || []; if(list.length) { cardIndex = (cardIndex + 1) % list.length; updateCard(); } }
+    function prevCard() { const list = folders[currentFolder] || []; if(list.length) { cardIndex = (cardIndex - 1 + list.length) % list.length; updateCard(); } }
+
+    // AI GEMINI INTEGRATION
+    async function generateAITest() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if(!key) { alert("Em hãy dán Gemini API Key vào trước nha!"); return; }
+
+      const area = document.getElementById('testArea');
+      area.innerHTML = `<div style="text-align:center; padding: 40px; font-weight:800; color: var(--deep-pink);">🌸 AI đang soạn đề thi cho em... Chờ 15-30s nha! 🌸</div>`;
+
+      const prompt = `Hãy tạo một bài kiểm tra tiếng Anh dạng JSON chuẩn gồm 5 câu hỏi dựa trên tiêu chuẩn:
+      - Cấp độ: ${document.querySelector('input[name="level"]:checked').value}
+      - Trả về cấu trúc JSON đúng định dạng:
+      {
+        "questions": [
+          {
+            "id": 1,
+            "question": "Nội dung câu hỏi...",
+            "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+            "answer": "A. ..."
+          }
+        ]
+      }`;
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+        const data = await response.json();
+        const text = data.candidates[0].content.parts[0].text;
+        const cleanJson = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+        generatedTest = JSON.parse(cleanJson);
+        renderTest(generatedTest.questions);
+      } catch (e) {
+        area.innerHTML = `<div style="color:red; text-align:center;">Lỗi tạo đề thi rồi em ơi! Em kiểm tra lại mã API Key nha.</div>`;
+      }
+    }
+
+    function renderTest(questions) {
+      const area = document.getElementById('testArea');
+      area.innerHTML = '';
+      userAnswers = {};
+
+      questions.forEach(q => {
+        let optionsHtml = '';
+        q.options.forEach(opt => {
+          optionsHtml += `<button class="option-btn" onclick="selectAnswer(${q.id}, '${opt}', this)">${opt}</button>`;
+        });
+
+        area.innerHTML += `
+          <div class="question-box">
+            <p style="font-weight:800; margin-bottom:10px;">Câu ${q.id}: ${q.question}</p>
+            <div>${optionsHtml}</div>
+          </div>
+        `;
+      });
+
+      area.innerHTML += `<button class="btn btn-pink" style="width:100%; padding:15px;" onclick="submitTest()">NỘP BÀI VÀ XEM KẾT QUẢ 🏆</button>`;
+    }
+
+    function selectAnswer(qId, opt, btn) {
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      userAnswers[qId] = opt;
+    }
+
+    function submitTest() {
+      let score = 0;
+      generatedTest.questions.forEach(q => {
+        if(userAnswers[q.id] === q.answer) score++;
+      });
+      alert(`🎉 Em đã làm xong bài! Kết quả của em: ${score}/${generatedTest.questions.length} câu đúng!`);
+    }
+
+    // Init check
+    if(currentUser) initApp();
+  </script>
+</body>
+</html>
